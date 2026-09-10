@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+
+# Runtime data
+data/
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+
+# Logs and local diagnostics
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+out/
+release/
+safe-release/
+coverage/
+.cache/
+tmp/
+temp/
+work/
+work-test-data*/
+
+# Desktop app artifacts
+*.exe
+*.blockmap
+*.msi
+*.dmg
+*.zip
+*.7z
+
+# Android app artifacts
+android/.gradle/
+android/app/build/
+*.apk
+*.aab
+*.idsig
+*.keystore
+*.jks
+local.properties
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

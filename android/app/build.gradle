@@ -1,0 +1,22 @@
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "local.shoppinglist.android"
+    compileSdk 35
+    buildToolsVersion "35.0.0"
+
+    defaultConfig {
+        applicationId "local.shoppinglist.android"
+        minSdk 24
+        targetSdk 35
+        versionCode 36
+        versionName "1.6.9"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

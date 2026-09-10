@@ -1,0 +1,9 @@
+plugins {
+    id "com.android.application" version "8.7.3" apply false
+}
+
+layout.buildDirectory = file("../work/android-build/root")
+
+subprojects {
+    layout.buildDirectory = file("${rootProject.projectDir}/../work/android-build/${project.name}")
+}

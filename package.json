@@ -1,0 +1,49 @@
+{
+  "name": "listy",
+  "version": "1.6.9",
+  "private": true,
+  "description": "Private Listy app for shopping, gaming, movies, shows, and locations with profiles, scraping, SQLite storage, tags, and sync.",
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "desktop": "electron .",
+    "build:web": "node scripts/build-github-pages.js",
+    "build:bluetooth-helper": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-bluetooth-helper.ps1",
+    "dist:win": "npm run build:bluetooth-helper && electron-builder --win nsis"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "build": {
+    "appId": "local.shoppinglist.app",
+    "productName": "Listy",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "desktop/**/*",
+      "public/**/*",
+      "server.js",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "desktop/native-bluetooth-sync.exe"
+    ],
+    "win": {
+      "icon": "desktop/icon.ico",
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^43.1.1",
+    "electron-builder": "^26.15.3"
+  }
+}
