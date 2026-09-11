@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EveryList</title>
+    <link rel="stylesheet" href="./docs/styles.css?v=20260908-08" />
+  </head>
+  <body>
+    <header class="desktop-titlebar hidden" id="desktopTitlebar" aria-label="Desktop app controls">
+      <div class="titlebar-nav">
+        <button class="titlebar-button" id="desktopBackButton" type="button" aria-label="Undo" title="Undo">
+          <span class="titlebar-arrow-icon titlebar-arrow-left" aria-hidden="true"></span>
+        </button>
+        <button class="titlebar-button" id="desktopForwardButton" type="button" aria-label="Redo" title="Redo">
+          <span class="titlebar-arrow-icon titlebar-arrow-right" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="titlebar-page">
+        <img class="titlebar-logo-image" src="./docs/app-icon.png?v=20260901-19" alt="" aria-hidden="true" />
+        <strong id="desktopTitleText">EveryList</strong>
+      </div>
+      <div class="titlebar-actions">
+        <button class="titlebar-export-button" id="desktopExportButton" type="button" aria-label="Export selected list" title="Export list">
+          <span class="titlebar-download-icon" aria-hidden="true"></span>
+        </button>
+        <button class="titlebar-button titlebar-faq-button" id="desktopFaqButton" type="button" aria-label="FAQ" title="FAQ">?</button>
+        <button class="titlebar-button" id="desktopTitleSettingsButton" type="button" aria-label="Settings" title="Settings">&#9881;</button>
+        <span class="titlebar-divider" aria-hidden="true"></span>
+        <button class="titlebar-window-button" id="desktopMinimizeButton" type="button" aria-label="Minimize">
+          <span class="titlebar-minimize-icon" aria-hidden="true"></span>
+        </button>
+        <button class="titlebar-window-button" id="desktopMaximizeButton" type="button" aria-label="Maximize">
+          <span class="titlebar-maximize-icon" aria-hidden="true"></span>
+        </button>
+        <button class="titlebar-window-button titlebar-close" id="desktopCloseButton" type="button" aria-label="Close">
+          <span class="titlebar-close-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+    <section class="section-chooser" id="sectionChooser" role="dialog" aria-modal="true" aria-labelledby="sectionChooserTitle">
+      <div class="section-chooser-card">
+        <img class="section-chooser-logo" src="./docs/app-icon.png?v=20260901-19" alt="" aria-hidden="true" />
+        <p class="section-chooser-kicker">Choose a list</p>
+        <h1 id="sectionChooserTitle"><span>Every</span><strong>List</strong></h1>
+        <div class="section-choice-grid" id="sectionChoiceGrid">
+          <button type="button" data-list-type="shopping">
+            <strong>Shopping</strong>
+            <span>Products, prices, links, and orders</span>
+          </button>
+          <button type="button" data-list-type="games">
+            <strong>Gaming</strong>
+            <span>Wanted, playing, finished, or dropped</span>
+          </button>
+          <button type="button" data-list-type="shows">
+            <strong>Movies &amp; Shows</strong>
+            <span>Watch lists, progress, and notes</span>
+          </button>
+          <button type="button" data-list-type="locations">
+            <strong>Locations</strong>
+            <span>Places, map links, plans, and visits</span>
+          </button>
+        </div>
+      </div>
+    </section>
+    <div class="mobile-nav-scrim hidden" id="mobileNavScrim"></div>
+    <div id="app" class="app-shell">
+      <aside class="profile-rail" aria-label="Profiles">
+        <div class="rail-title">
+          <span>Profiles</span>
+          <button class="rail-close-button" id="mobileNavCloseButton" type="button" aria-label="Close navigation">x</button>
+        </div>
+        <div class="profile-list" id="profileList"></div>
+        <div class="rail-actions">
+          <button class="icon-button rail-add" id="addProfileButton" type="button" title="Add profile" aria-label="Add profile">
+            +
+          </button>
+          <div class="rail-bottom-actions" aria-label="App controls">
+            <button class="rail-link bin-link" id="sidebarBinButton" type="button" aria-label="Open Bin" title="Bin">
+              <span class="bin-icon" aria-hidden="true"></span>
+            </button>
+            <button class="rail-link theme-toggle-button" id="themeToggleButton" type="button" aria-label="Switch to dark mode" title="Switch theme"></button>
+            <button class="rail-link settings-link" id="settingsButton" type="button" aria-label="Website settings" title="Website settings">&#9881;</button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-stage">
+        <header class="topbar">
+          <div class="brand-cluster">
+            <a class="brand" id="brandLink" href="/" aria-label="EveryList">
+              <span>Every</span><strong>List</strong>
+            </a>
+            <button class="section-switch-button" id="sectionSwitchButton" type="button">Shopping</button>
+          </div>
+          <nav class="status-tabs" id="statusTabs" aria-label="List status"></nav>
+          <label class="mobile-status-control">
+            <span>Status</span>
+            <select id="mobileStatusSelect" aria-label="Shopping status"></select>
+          </label>
+        </header>
+
+        <section class="tag-strip" aria-label="Tags">
+          <button class="tag-scroll-button tag-scroll-left" id="tagScrollLeftButton" type="button" aria-label="Scroll tags left">&#8249;</button>
+          <div class="tag-tabs" id="tagTabs"></div>
+          <button class="tag-scroll-button tag-scroll-right" id="tagScrollRightButton" type="button" aria-label="Scroll tags right">&#8250;</button>
+          <button class="clear-tag-button hidden" id="clearTagButton" type="button">Clear</button>
+        </section>
+
+        <section class="toolbar" aria-label="Search and filters">
+          <label class="search-box">
+            <span aria-hidden="true">Search</span>
+            <input id="searchInput" type="search" placeholder="Search titles, tags, links..." autocomplete="off" />
+          </label>
+          <label class="control-pair">
+            <span>Filter</span>
+            <select id="quickFilter">
+              <option value="all">Everything</option>
+              <option value="priced">Has price</option>
+              <option value="missing-price">Missing price</option>
+              <option value="with-notes">Has notes</option>
+              <option value="ordered-active">Active orders</option>
+            </select>
+          </label>
+          <label class="control-pair">
+            <span>Sort by</span>
+            <select id="sortSelect">
+              <option value="newest">Newest</option>
+              <option value="price-low">Price low</option>
+              <option value="price-high">Price high</option>
+              <option value="name">Name</option>
+              <option value="site">Site</option>
+              <option value="eta">Order ETA</option>
+            </select>
+          </label>
+          <div class="view-toggle" aria-label="View mode">
+            <button class="view-button" id="viewDetailsButton" type="button" aria-label="Show full cards">Cards</button>
+            <button class="view-button" id="viewImagesButton" type="button" aria-label="Show pictures only">Images</button>
+          </div>
+        </section>
+
+        <section class="profile-summary" id="profileSummary"></section>
+        <section class="product-grid" id="productGrid" aria-live="polite"></section>
+        <div class="product-scroll-indicator hidden" id="productScrollIndicator" aria-hidden="true"></div>
+      </main>
+    </div>
+
+    <nav class="bottom-action-nav" aria-label="Quick actions">
+      <button class="bottom-nav-button" id="mobileMenuButton" type="button" aria-label="Open profiles">Profiles</button>
+      <button class="bottom-add-button" id="bottomAddItemButton" type="button" title="Add item" aria-label="Add item">+</button>
+      <button class="bottom-nav-button" id="mobileSettingsButton" type="button" aria-label="Website settings">Settings</button>
+    </nav>
+
+    <div class="modal-backdrop hidden" id="linkModal" role="dialog" aria-modal="true" aria-labelledby="linkModalTitle">
+      <form class="link-modal modal-card" id="linkForm">
+        <div class="modal-header">
+          <div>
+          <h2 id="linkModalTitle">Paste a link</h2>
+          </div>
+          <button class="ghost-icon" type="button" data-close-modal aria-label="Close">x</button>
+        </div>
+        <label class="field">
+          <span id="productUrlLabel">Link</span>
+          <input id="productUrlInput" name="url" type="url" placeholder="https://..." required />
+        </label>
+        <div class="duplicate-notice hidden" id="duplicateNotice" role="status">
+          <div>
+            <strong>Already in EveryList</strong>
+            <span id="duplicateNoticeTitle">Existing item</span>
+            <small id="duplicateNoticeMeta">Same link</small>
+          </div>
+          <div class="duplicate-actions">
+            <button class="secondary-button" id="openDuplicateButton" type="button">Open existing</button>
+            <button class="primary-button" id="addDuplicateAnywayButton" type="button">Add anyway</button>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="secondary-button" id="manualItemButton" type="button">Create manually</button>
+          <button class="primary-button" type="submit">Add from link</button>
+        </div>
+        <p class="form-message" id="linkMessage" role="status"></p>
+      </form>
+    </div>
+
+    <div class="modal-backdrop hidden" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+      <form class="profile-modal modal-card" id="profileForm">
+        <div class="modal-header">
+          <div>
+            <h2 id="profileModalTitle">Edit profile</h2>
+          </div>
+          <button class="ghost-icon" type="button" data-close-modal aria-label="Close">x</button>
+        </div>
+        <label class="field">
+          <span>Name</span>
+          <input id="profileNameInput" name="name" maxlength="64" required />
+        </label>
+        <label class="field">
+          <span>Avatar image URL</span>
+          <input id="profileAvatarInput" name="avatarUrl" type="url" placeholder="Optional" />
+        </label>
+        <div class="profile-colour-layout">
+          <label class="field profile-colour-panel">
+            <span>Profile colour</span>
+            <input id="profileAccentInput" name="accent" type="color" value="#b89d6b" />
+          </label>
+          <div class="field app-colour-panel" id="appColourPanel">
+            <span>App colour</span>
+            <div class="profile-theme-options" id="profileThemeOptions" role="radiogroup" aria-label="App colour"></div>
+            <div class="custom-theme-fields hidden" id="customThemeFields">
+              <label>
+                <span>Light</span>
+                <input id="profileRailLightCustomInput" type="color" value="#3f4e57" />
+              </label>
+              <label>
+                <span>Dark</span>
+                <input id="profileRailDarkCustomInput" type="color" value="#20282d" />
+              </label>
+            </div>
+            <input id="profileRailLightInput" name="railLight" type="hidden" value="#3f4e57" />
+            <input id="profileRailDarkInput" name="railDark" type="hidden" value="#20282d" />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="danger-button hidden" id="deleteProfileInModalButton" type="button">Delete profile</button>
+          <span class="modal-spacer"></span>
+          <button class="secondary-button" type="button" data-close-modal>Cancel</button>
+          <button class="primary-button" type="submit">Save profile</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-backdrop hidden" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+      <form class="settings-modal modal-card" id="settingsForm">
+        <div class="modal-header">
+          <div>
+            <h2 id="settingsModalTitle">Settings</h2>
+          </div>
+          <button class="ghost-icon" type="button" data-close-modal aria-label="Close">x</button>
+        </div>
+        <label class="field">
+          <span>Default currency</span>
+          <select id="defaultCurrencyInput" name="defaultCurrency">
+            <option value="EUR">EUR - Euro</option>
+            <option value="USD">USD - US Dollar</option>
+            <option value="JPY">JPY - Japanese Yen</option>
+            <option value="GBP">GBP - British Pound</option>
+            <option value="CNY">CNY - Chinese Yuan</option>
+            <option value="AUD">AUD - Australian Dollar</option>
+            <option value="CAD">CAD - Canadian Dollar</option>
+            <option value="CHF">CHF - Swiss Franc</option>
+            <option value="HKD">HKD - Hong Kong Dollar</option>
+            <option value="SGD">SGD - Singapore Dollar</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Dev server URL</span>
+          <input id="serverUrlInput" name="serverUrl" type="url" placeholder="Optional, e.g. http://192.168.1.25:4173" />
+        </label>
+        <p class="muted" id="syncInfoText"></p>
+        <div class="pc-link-panel">
+          <div>
+            <strong>Fallback PC link URL</strong>
+            <code id="pcLinkUrlText">Checking...</code>
+          </div>
+          <button class="secondary-button" id="copyPcLinkUrlButton" type="button">Copy</button>
+        </div>
+        <section class="settings-section">
+          <div class="section-heading">
+            <h3>Storage and sync</h3>
+            <p id="storageInfoText">Checking storage...</p>
+          </div>
+          <div class="management-actions">
+            <button class="secondary-button" id="openSyncHistoryButton" type="button">Sync History</button>
+            <button class="secondary-button" id="exportSyncBundleButton" type="button">Export Sync Bundle</button>
+            <button class="secondary-button" id="importSyncBundleButton" type="button">Import Sync Bundle</button>
+            <button class="secondary-button" id="bluetoothSyncButton" type="button">Bluetooth Sync</button>
+            <button class="secondary-button danger-soft-button hidden" id="disconnectBluetoothButton" type="button">Disconnect Phone</button>
+            <button class="secondary-button" id="compactDatabaseButton" type="button">Compact Database</button>
+          </div>
+          <p class="bluetooth-sync-status muted" id="bluetoothSyncStatus"></p>
+          <div class="bluetooth-device-chooser hidden" id="bluetoothDeviceChooser">
+            <div class="bluetooth-device-heading">
+              <strong>Choose your phone</strong>
+              <button class="ghost-icon" id="cancelBluetoothSelectButton" type="button" aria-label="Cancel Bluetooth search">x</button>
+            </div>
+            <div class="bluetooth-device-list" id="bluetoothDeviceList"></div>
+            <p class="muted">Start Bluetooth sync on Android first, then pick the device that appears here.</p>
+          </div>
+          <input class="hidden" id="syncBundleFileInput" type="file" accept="application/json,.json" />
+        </section>
+        <div class="modal-actions">
+          <button class="secondary-button" type="button" data-close-modal>Cancel</button>
+          <button class="primary-button" type="submit">Save settings</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-backdrop hidden" id="binModal" role="dialog" aria-modal="true" aria-labelledby="binModalTitle">
+      <section class="modal-card management-modal">
+        <div class="modal-header">
+          <div>
+            <h2 id="binModalTitle">Bin</h2>
+            <p class="muted">Restore deleted items or clear old Bin details.</p>
+          </div>
+          <button class="ghost-icon" type="button" data-close-modal aria-label="Close">x</button>
+        </div>
+        <div class="management-actions bin-management-actions">
+          <button class="secondary-button" id="cleanupBinButton" type="button">Clean Old Bin Items</button>
+        </div>
+        <div class="management-list" id="binList"></div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="syncHistoryModal" role="dialog" aria-modal="true" aria-labelledby="syncHistoryModalTitle">
+      <section class="modal-card management-modal">
+        <div class="modal-header">
+          <div>
+            <h2 id="syncHistoryModalTitle">Sync History</h2>
+          </div>
+          <button class="ghost-icon" type="button" data-close-modal aria-label="Close">x</button>
+        </div>
+        <div class="management-list" id="syncHistoryList"></div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="faqModal" role="dialog" aria-modal="true" aria-labelledby="faqModalTitle">
+      <section class="modal-card faq-modal">
+        <div class="modal-header">
+          <div>
+            <h2 id="faqModalTitle">FAQ</h2>
+          </div>
+          <button class="ghost-icon" type="button" data-close-modal aria-label="Close">x</button>
+        </div>
+        <div class="faq-list">
+          <article>
+            <h3>How do I add an item?</h3>
+            <p>Use the plus button at the bottom right, paste a link, then edit anything the site could not read.</p>
+          </article>
+          <article>
+            <h3>What does Export do?</h3>
+            <p>It downloads the selected profile and list section as a CSV file you can open in Excel, Sheets, or a text editor.</p>
+          </article>
+          <article>
+            <h3>Can I recover deleted items?</h3>
+            <p>Open Bin from the sidebar. Deleted items can be restored until old Bin cleanup clears their full details.</p>
+          </article>
+          <article>
+            <h3>Why are some prices or images missing?</h3>
+            <p>Some sites block scraping or hide details behind scripts. Open the item editor to fill those fields manually.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden editor-backdrop" id="editorModal" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+      <form class="editor-shell" id="editorForm">
+        <header class="editor-header">
+          <div>
+            <h2 id="editorTitle">Make it yours</h2>
+          </div>
+          <div class="editor-header-actions">
+            <button class="secondary-button" id="refreshScrapeButton" type="button">Refresh from link</button>
+            <button class="ghost-icon" type="button" data-close-modal aria-label="Close">x</button>
+          </div>
+        </header>
+
+        <div class="editor-body">
+          <aside class="editor-preview">
+            <div class="preview-card">
+              <div class="preview-image-wrap" id="previewImageWrap"></div>
+              <div class="preview-copy">
+                <p class="preview-site" id="previewSite"></p>
+                <h3 id="previewTitle"></h3>
+                <p id="previewDescription"></p>
+                <strong id="previewPrice"></strong>
+                <div class="preview-tags" id="previewTags"></div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="editor-fields">
+            <div class="field-grid three">
+              <label class="field">
+                <span>Profile</span>
+                <select id="itemProfileInput" name="profileId"></select>
+              </label>
+              <label class="field">
+                <span>List</span>
+                <select id="itemListTypeInput" name="listType">
+                  <option value="shopping">Shopping</option>
+                  <option value="games">Gaming</option>
+                  <option value="shows">Movies &amp; Shows</option>
+                  <option value="locations">Locations</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Status</span>
+                <select id="itemStatusInput" name="status"></select>
+              </label>
+            </div>
+
+            <div class="field-grid two">
+              <label class="field">
+                <span>Priority</span>
+                <select id="itemPriorityInput" name="priority">
+                  <option value="0">Normal</option>
+                  <option value="1">Nice to have</option>
+                  <option value="2">Soon</option>
+                  <option value="3">Important</option>
+                  <option value="4">High</option>
+                  <option value="5">Top</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="field">
+              <span>Title</span>
+              <input id="itemTitleInput" name="title" maxlength="180" required />
+            </label>
+            <label class="field">
+              <span id="itemUrlLabel">Link</span>
+              <input id="itemUrlInput" name="url" type="url" placeholder="Optional" />
+            </label>
+            <label class="field">
+              <span>Image URL</span>
+              <input id="itemImageInput" name="imageUrl" type="url" placeholder="Optional" />
+            </label>
+            <div class="field-grid two">
+              <label class="field">
+                <span id="itemPriceLabel">Price</span>
+                <input id="itemPriceInput" name="priceAmount" type="number" min="0" step="0.01" placeholder="0.00" />
+              </label>
+              <label class="field">
+                <span>Currency</span>
+                <input id="itemCurrencyInput" name="currency" maxlength="3" value="EUR" />
+              </label>
+            </div>
+            <label class="field">
+              <span>Tags</span>
+              <input id="itemTagsInput" name="tags" placeholder="tech, furniture, laptop" />
+            </label>
+            <label class="field">
+              <span>Description</span>
+              <textarea id="itemDescriptionInput" name="description" rows="4"></textarea>
+            </label>
+            <label class="field">
+              <span>Notes</span>
+              <textarea id="itemNotesInput" name="notes" rows="3" placeholder="Sizing, colour, why you want it, alternatives..."></textarea>
+            </label>
+
+            <section class="order-panel hidden" id="orderPanel">
+              <div class="section-heading">
+                <h3>Order tracking</h3>
+              </div>
+              <div class="field-grid two">
+                <label class="field">
+                  <span>Order status</span>
+                  <select id="orderStatusInput" name="orderStatus">
+                    <option value="placed">Placed</option>
+                    <option value="processing">Processing</option>
+                    <option value="packed">Packed</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="out_for_delivery">Out for delivery</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="delayed">Delayed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Carrier</span>
+                  <input id="carrierInput" name="carrier" placeholder="DHL, DPD, UPS..." />
+                </label>
+              </div>
+              <div class="field-grid two">
+                <label class="field">
+                  <span>Tracking number</span>
+                  <input id="trackingNumberInput" name="trackingNumber" />
+                </label>
+                <label class="field">
+                  <span>Tracking link</span>
+                  <input id="trackingUrlInput" name="trackingUrl" type="url" />
+                </label>
+              </div>
+              <div class="field-grid two">
+                <label class="field">
+                  <span>Ordered date</span>
+                  <input id="orderedAtInput" name="orderedAt" type="date" />
+                </label>
+                <label class="field">
+                  <span>Estimated delivery</span>
+                  <input id="estimatedDeliveryInput" name="estimatedDelivery" type="date" />
+                </label>
+              </div>
+              <label class="field">
+                <span>Order notes</span>
+                <textarea id="orderNotesInput" name="orderNotes" rows="3"></textarea>
+              </label>
+            </section>
+          </div>
+        </div>
+
+        <footer class="editor-footer">
+          <button class="danger-button" id="deleteItemButton" type="button">Delete item</button>
+          <div class="footer-spacer"></div>
+          <button class="secondary-button" type="button" data-close-modal>Cancel</button>
+          <button class="primary-button" type="submit">Save item</button>
+        </footer>
+        <p class="form-message" id="editorMessage" role="status"></p>
+      </form>
+    </div>
+
+    <div class="modal-backdrop hidden" id="deleteItemModal" role="dialog" aria-modal="true" aria-labelledby="deleteItemTitle">
+      <section class="modal-card delete-item-modal">
+        <div class="modal-header">
+          <div>
+            <h2 id="deleteItemTitle">Move item to Bin?</h2>
+            <p class="delete-item-lead">You can restore it later from the Bin.</p>
+          </div>
+          <button class="ghost-icon" type="button" data-close-delete-modal aria-label="Close">x</button>
+        </div>
+        <div class="delete-item-preview">
+          <div class="delete-item-image" id="deleteItemImagePreview"></div>
+          <div class="delete-item-copy">
+            <strong id="deleteItemName"></strong>
+            <span id="deleteItemMeta"></span>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="secondary-button" type="button" data-close-delete-modal>Keep item</button>
+          <button class="danger-button" id="confirmDeleteItemButton" type="button">Move to Bin</button>
+        </div>
+      </section>
+    </div>
+
+    <template id="emptyStateTemplate">
+      <div class="empty-state">
+        <div class="empty-art" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <h2>No items here yet</h2>
+        <p>Saved products for this view will appear here.</p>
+        <button class="primary-button" type="button" data-add-empty>Add item</button>
+      </div>
+    </template>
+
+    <script>window.LISTY_STATIC_MODE = true;</script>
+    <script src="./docs/app.js?v=20260908-04" defer></script>
+  </body>
+</html>

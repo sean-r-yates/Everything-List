@@ -11,10 +11,10 @@ let bluetoothSelectTimer;
 let bluetoothSelectionCallback = null;
 let bluetoothSelectionDevices = new Map();
 let nativeBluetoothProcess = null;
-const shoppingListBluetoothName = /listy|tracklist|track list|lifelist|life list|shoppinglist|shopping list/i;
+const shoppingListBluetoothName = /everylist|every list|listy|tracklist|track list|lifelist|life list|shoppinglist|shopping list/i;
 const androidBluetoothName = /android|phone|galaxy|pixel|motorola|moto|xiaomi|redmi|oneplus|oppo|vivo|honor|huawei|nothing/i;
 
-app.setName("Listy");
+app.setName("EveryList");
 app.setPath("userData", path.join(app.getPath("appData"), "TrackList"));
 app.commandLine.appendSwitch("enable-experimental-web-platform-features");
 app.commandLine.appendSwitch("enable-features", "UncachedGattDiscoveryForGattConnection");
@@ -30,7 +30,7 @@ function createWindow() {
     height: 860,
     minWidth: 960,
     minHeight: 640,
-    title: "Listy",
+    title: "EveryList",
     frame: false,
     icon: path.join(__dirname, "icon.ico"),
     autoHideMenuBar: true,
@@ -297,7 +297,7 @@ function startServer() {
   serverProcess.on("exit", (code) => {
     if (code !== 0 && !app.isQuitting) {
       dialog.showErrorBox(
-        "Listy server stopped",
+        "EveryList server stopped",
         "The local database server stopped unexpectedly. Restart the app to try again."
       );
     }

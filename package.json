@@ -1,8 +1,8 @@
 {
-  "name": "listy",
+  "name": "everylist",
   "version": "1.6.9",
   "private": true,
-  "description": "Private Listy app for shopping, gaming, movies, shows, and locations with profiles, scraping, SQLite storage, tags, and sync.",
+  "description": "Private EveryList app for shopping, gaming, movies, shows, and locations with profiles, scraping, SQLite storage, tags, and sync.",
   "main": "desktop/main.cjs",
   "scripts": {
     "start": "node server.js",
@@ -17,7 +17,7 @@
   },
   "build": {
     "appId": "local.shoppinglist.app",
-    "productName": "Listy",
+    "productName": "EveryList",
     "directories": {
       "output": "dist"
     },

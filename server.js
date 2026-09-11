@@ -155,7 +155,7 @@ const server = createServer(async (request, response) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`Listy running at http://localhost:${PORT}`);
+  console.log(`EveryList running at http://localhost:${PORT}`);
   console.log(`Database: ${DB_PATH}`);
 });
 

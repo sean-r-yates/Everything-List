@@ -1,6 +1,6 @@
 # Offline Sync Roadmap
 
-This rebuild moves Listy toward independent PC and Android data with Bluetooth sync.
+This rebuild moves EveryList toward independent PC and Android data with Bluetooth sync.
 
 ## Phase 1 - PC Sync Foundation
 

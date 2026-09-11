@@ -187,7 +187,7 @@ public class MainActivity extends Activity {
 
         String url = extractSharedUrl(intent);
         if (blank(url)) {
-            toast("Listy could not find a link in that share.");
+            toast("EveryList could not find a link in that share.");
             return true;
         }
 
@@ -552,7 +552,7 @@ public class MainActivity extends Activity {
         }
 
         LinearLayout actions = new LinearLayout(this);
-        dialog.setView(compactDialogShell("Listy", activeAccentColor(), content, actions), 0, 0, 0, 0);
+        dialog.setView(compactDialogShell("EveryList", activeAccentColor(), content, actions), 0, 0, 0, 0);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
@@ -618,7 +618,7 @@ public class MainActivity extends Activity {
         ShoppingStore.Profile profile = currentProfile();
         int accent = activeAccentColor();
         String owner = profile == null ? "Profile" : profile.name;
-        String title = owner + " " + listLabel(activeListType) + " List";
+        String title = owner + "'s " + listLabel(activeListType) + " List";
         SpannableStringBuilder styled = new SpannableStringBuilder(title);
         if (profile != null) {
             styled.setSpan(new ForegroundColorSpan(accent), 0, owner.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -1446,7 +1446,7 @@ public class MainActivity extends Activity {
         addParams.setMargins(dp(8), 0, 0, 0);
         actions.addView(add, addParams);
 
-        duplicateDialog.setView(compactDialogShell("Already in Listy", accent, content, actions), 0, 0, 0, 0);
+        duplicateDialog.setView(compactDialogShell("Already in EveryList", accent, content, actions), 0, 0, 0, 0);
         duplicateDialog.show();
         styleCompactDialogWindow(duplicateDialog);
     }
@@ -1760,7 +1760,7 @@ public class MainActivity extends Activity {
         ShoppingStore.Profile profile = currentProfile();
         List<ShoppingStore.Item> items = store.items(activeProfileId, activeListType, "all", "");
         StringBuilder output = new StringBuilder();
-        output.append(profile == null ? "Listy" : profile.name + " " + listLabel(activeListType) + " List").append("\n\n");
+        output.append(profile == null ? "EveryList" : profile.name + " " + listLabel(activeListType) + " List").append("\n\n");
         for (ShoppingStore.Item item : items) {
             output.append("- ").append(item.title).append("\n");
             output.append("  Status: ").append(labelForStatus(item.status, item.listType)).append("\n");
@@ -1779,10 +1779,10 @@ public class MainActivity extends Activity {
 
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");
-        share.putExtra(Intent.EXTRA_SUBJECT, "Listy export");
+        share.putExtra(Intent.EXTRA_SUBJECT, "EveryList export");
         share.putExtra(Intent.EXTRA_TEXT, output.toString());
         try {
-            startActivity(Intent.createChooser(share, "Export Listy"));
+            startActivity(Intent.createChooser(share, "Export EveryList"));
         } catch (Exception error) {
             toast("No export target found.");
         }
@@ -1816,7 +1816,7 @@ public class MainActivity extends Activity {
     private void shareSyncBundle(String bundle) {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("application/json");
-        share.putExtra(Intent.EXTRA_SUBJECT, "Listy sync bundle");
+        share.putExtra(Intent.EXTRA_SUBJECT, "EveryList sync bundle");
         share.putExtra(Intent.EXTRA_TEXT, bundle);
         try {
             startActivity(Intent.createChooser(share, "Export sync bundle"));

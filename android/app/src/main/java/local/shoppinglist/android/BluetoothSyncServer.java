@@ -127,7 +127,7 @@ final class BluetoothSyncServer {
                 return;
             }
             stop(false);
-            throw new IllegalStateException("This phone cannot advertise the Listy Bluetooth service. Use Export sync bundle and Import sync bundle instead.");
+            throw new IllegalStateException("This phone cannot advertise the EveryList Bluetooth service. Use Export sync bundle and Import sync bundle instead.");
         }
 
         gattServer = manager.openGattServer(context, gattCallback);
@@ -239,7 +239,7 @@ final class BluetoothSyncServer {
     private boolean startClassicServer(BluetoothAdapter adapter) {
         stopClassicServerOnly();
         try {
-            classicServerSocket = adapter.listenUsingRfcommWithServiceRecord("Listy Sync", SERVICE_UUID);
+            classicServerSocket = adapter.listenUsingRfcommWithServiceRecord("EveryList Sync", SERVICE_UUID);
             int token = ++classicServerToken;
             classicExecutor.execute(() -> acceptClassicConnections(token));
             return true;
@@ -355,7 +355,7 @@ final class BluetoothSyncServer {
 
     private void startAdvertising(boolean includeDeviceName) {
         if (advertiser == null) return;
-        status("Listy sync service is published. Making it visible to the PC...");
+        status("EveryList sync service is published. Making it visible to the PC...");
         try {
             advertiser.stopAdvertising(advertiseCallback);
         } catch (Exception ignored) {
@@ -409,7 +409,7 @@ final class BluetoothSyncServer {
         @Override
         public void onServiceAdded(int status, BluetoothGattService service) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                BluetoothSyncServer.this.status("Listy Bluetooth service is ready on Android.");
+                BluetoothSyncServer.this.status("EveryList Bluetooth service is ready on Android.");
                 startAdvertising();
             } else {
                 BluetoothSyncServer.this.status("Could not publish Bluetooth sync service. Android returned GATT status " + status + ".");
@@ -680,7 +680,7 @@ final class BluetoothSyncServer {
     }
 
     private void status(String message) {
-        Log.d("ListySync", message);
+        Log.d("EveryListSync", message);
         listener.onStatus(message);
     }
 

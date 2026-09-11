@@ -1047,6 +1047,12 @@ select {
   overflow-wrap: anywhere;
 }
 
+.summary-owner,
+.summary-list-word {
+  color: var(--accent);
+  font-weight: 800;
+}
+
 .summary-pill {
   border: 1px solid #ddd8cc;
   border-radius: 999px;

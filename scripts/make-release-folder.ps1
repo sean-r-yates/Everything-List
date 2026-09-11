@@ -7,9 +7,9 @@ $distDir = Join-Path $root "dist"
 New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
 
 $patterns = @(
-  "Listy Setup *.exe",
-  "Listy Android *.apk",
-  "Listy Android.apk"
+  "EveryList Setup *.exe",
+  "EveryList Android *.apk",
+  "EveryList Android.apk"
 )
 
 foreach ($pattern in $patterns) {

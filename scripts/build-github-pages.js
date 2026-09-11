@@ -22,4 +22,12 @@ copyFileSync(path.join(publicDir, "styles.css"), path.join(docsDir, "styles.css"
 copyFileSync(path.join(publicDir, "app.js"), path.join(docsDir, "app.js"));
 copyFileSync(path.join(publicDir, "app-icon.png"), path.join(docsDir, "app-icon.png"));
 
-console.log("GitHub Pages files written to docs/");
+const rootHtml = html
+  .replace(/href="\.\/styles\.css/g, 'href="./docs/styles.css')
+  .replace(/src="\.\/app-icon\.png/g, 'src="./docs/app-icon.png')
+  .replace(/src="\.\/app\.js/g, 'src="./docs/app.js');
+
+writeFileSync(path.join(root, "index.html"), rootHtml);
+writeFileSync(path.join(root, ".nojekyll"), "");
+
+console.log("GitHub Pages files written to docs/ and root index fallback.");

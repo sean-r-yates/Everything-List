@@ -1,6 +1,6 @@
 # GitHub Upload Notes
 
-This folder is a clean source-only copy of Listy for GitHub.
+This folder is a clean source-only copy of EveryList for GitHub.
 
 Excluded from this copy:
 

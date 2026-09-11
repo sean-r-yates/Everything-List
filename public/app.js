@@ -508,7 +508,7 @@ async function loadState() {
     state.activeProfileId = nextProfile ? nextProfile.id : null;
     render();
   } catch (error) {
-    showToast(error.message || "Could not load Listy.", true);
+    showToast(error.message || "Could not load EveryList.", true);
   }
 }
 
@@ -741,7 +741,13 @@ function renderSummary() {
   avatar.style.setProperty("--profile-accent", profile?.accent || "#b89d6b");
   avatar.textContent = initials(profile?.name || "Me");
   const heading = document.createElement("h1");
-  heading.textContent = profile ? `${profile.name}'s ${def.label.toLowerCase()}` : def.label;
+  const owner = document.createElement("span");
+  owner.className = "summary-owner";
+  owner.textContent = profile?.name || "Profile";
+  const listWord = document.createElement("span");
+  listWord.className = "summary-list-word";
+  listWord.textContent = "List";
+  heading.append(owner, document.createTextNode(`'s ${def.label} `), listWord);
   const pill = document.createElement("span");
   pill.className = "summary-pill";
   pill.textContent = activeStatusLabel();
@@ -1849,7 +1855,7 @@ function staticReadDb() {
   db.changes = Array.isArray(db.changes) ? db.changes : [];
   db.nextProfileId = Math.max(Number(db.nextProfileId || 1), ...db.profiles.map((profile) => Number(profile.id || 0) + 1), 1);
   db.nextItemId = Math.max(Number(db.nextItemId || 1), ...db.items.map((item) => Number(item.id || 0) + 1), 1);
-  db.device = db.device || { id: staticUuid(), name: "Hosted Listy", platform: "web", createdAt: staticNow() };
+    db.device = db.device || { id: staticUuid(), name: "Hosted EveryList", platform: "web", createdAt: staticNow() };
 
   if (!staticListProfiles(db).length) {
     const now = staticNow();
@@ -1897,7 +1903,7 @@ function staticSeedDb() {
     nextItemId: 1,
     device: {
       id: staticUuid(),
-      name: "Hosted Listy",
+      name: "Hosted EveryList",
       platform: "web",
       createdAt: now,
       lastSeenAt: now
@@ -1916,7 +1922,7 @@ function staticSaveDb(db) {
 function staticDeviceInfo(db) {
   return {
     id: db.device?.id || "",
-    name: db.device?.name || "Hosted Listy",
+    name: db.device?.name || "Hosted EveryList",
     platform: db.device?.platform || "web",
     lastSeenAt: db.device?.lastSeenAt || ""
   };
@@ -2361,7 +2367,7 @@ function staticRecordChange(db, entityType, entityUuid, operation, payload, summ
   db.changes.unshift({
     id: staticUuid(),
     deviceId: db.device?.id || "",
-    deviceName: db.device?.name || "Hosted Listy",
+    deviceName: db.device?.name || "Hosted EveryList",
     entityType,
     entityUuid,
     operation,
@@ -2805,7 +2811,7 @@ function cloneData(value) {
 function updateDesktopTitlebar() {
   if (!state.isDesktopApp) return;
   const profile = activeProfile();
-  els.desktopTitleText.textContent = profile ? profile.name : "Listy";
+  els.desktopTitleText.textContent = profile ? profile.name : "EveryList";
 }
 
 function scrollTags(direction) {
@@ -3031,7 +3037,7 @@ async function syncWithWebBluetooth() {
   hideBluetoothDeviceChooser();
   updateBluetoothControls();
   setBusy(els.bluetoothSyncButton, true);
-  setBluetoothStatus("Start Bluetooth sync mode on Android, wait for Ready, then choose the Listy device here.");
+  setBluetoothStatus("Start Bluetooth sync mode on Android, wait for Ready, then choose the EveryList device here.");
 
   let device;
   let completed = false;
@@ -3046,14 +3052,14 @@ async function syncWithWebBluetooth() {
       }
     }
 
-    setBluetoothStatus("Searching for the Android Listy sync service...");
+    setBluetoothStatus("Searching for the Android EveryList sync service...");
     device = await withTimeout(
       navigator.bluetooth.requestDevice({
         filters: [{ services: [bluetoothSync.serviceUuid] }],
         optionalServices: [bluetoothSync.serviceUuid]
       }),
       bluetoothSync.connectTimeoutMs,
-      "Could not see the Android Listy sync service. On Android, open Settings > Bluetooth sync and wait until it says Ready."
+      "Could not see the Android EveryList sync service. On Android, open Settings > Bluetooth sync and wait until it says Ready."
     );
     if (!isBluetoothRunActive(runId)) {
       disconnectBluetoothDevice(device);
@@ -3075,8 +3081,8 @@ async function syncWithWebBluetooth() {
       disconnectBluetoothDevice(device);
       return;
     }
-    setBluetoothStatus("Connected. Finding the Listy sync service...");
-    const channel = await getListyBluetoothService(device, server, deviceName, runId);
+    setBluetoothStatus("Connected. Finding the EveryList sync service...");
+    const channel = await getEveryListBluetoothService(device, server, deviceName, runId);
     server = channel.server;
     const service = channel.service;
     if (!isBluetoothRunActive(runId)) {
@@ -3174,7 +3180,7 @@ function withTimeout(promise, ms, message) {
   ]).finally(() => clearTimeout(timeout));
 }
 
-async function getListyBluetoothService(device, initialServer, deviceName, runId) {
+async function getEveryListBluetoothService(device, initialServer, deviceName, runId) {
   const startedAt = Date.now();
   const deadline = startedAt + bluetoothSync.setupTimeoutMs;
   let lastError = null;
@@ -3202,7 +3208,7 @@ async function getListyBluetoothService(device, initialServer, deviceName, runId
         throw error;
       }
       if (server.connected === false) {
-        throw new Error("Bluetooth disconnected before the Listy sync service could be checked.");
+        throw new Error("Bluetooth disconnected before the EveryList sync service could be checked.");
       }
       if (!refreshedConnection && device?.gatt?.connected) {
         refreshedConnection = true;
@@ -3221,7 +3227,7 @@ async function getListyBluetoothService(device, initialServer, deviceName, runId
         continue;
       }
       const elapsed = Math.round((Date.now() - startedAt) / 1000);
-      setBluetoothStatus(`Connected. Waiting for the Listy sync service (${elapsed}s)...`);
+      setBluetoothStatus(`Connected. Waiting for the EveryList sync service (${elapsed}s)...`);
       await delay(bluetoothSync.serviceRetryMs);
     }
   }
@@ -3229,7 +3235,7 @@ async function getListyBluetoothService(device, initialServer, deviceName, runId
   const name = deviceName || "the phone";
   const detail = lastError?.message ? ` Last Bluetooth message: ${lastError.message}` : "";
   throw new Error(
-    `Bluetooth connected to ${name}, but the Listy sync service was not found. ` +
+    `Bluetooth connected to ${name}, but the EveryList sync service was not found. ` +
       "On Android, open Settings > Bluetooth sync and wait until it says Ready. If it already says Ready, turn Bluetooth off and on once, then retry from both apps. " +
       "If the Android app is older than this PC app, install the newest APK." +
       detail
@@ -3299,13 +3305,13 @@ function renderBluetoothDeviceChooser(payload = {}) {
   updateBluetoothControls();
 
   if (!devices.length) {
-    els.bluetoothDeviceList.innerHTML = '<p class="muted">No Listy sync service found yet. Keep the Android sync window open until it says Ready.</p>';
+    els.bluetoothDeviceList.innerHTML = '<p class="muted">No EveryList sync service found yet. Keep the Android sync window open until it says Ready.</p>';
     return;
   }
 
   els.bluetoothDeviceList.innerHTML = devices.map((device) => {
     const label = escapeHtml(device.name || "Unnamed Bluetooth device");
-    const hint = "Listy sync device";
+    const hint = "EveryList sync device";
     return `
       <button class="bluetooth-device-option" type="button" data-bluetooth-device-id="${escapeHtml(device.id)}">
         <span>${label}</span>
@@ -3389,7 +3395,7 @@ function friendlyBluetoothError(error) {
   const message = String(error?.message || error || "").trim();
   const name = String(error?.name || "");
   if (name === "NotFoundError" || /no device|user cancelled|user canceled|cancelled|canceled/i.test(message)) {
-    return "Could not see the Android Listy sync service. Start Bluetooth sync on Android, wait until it says Ready, then try again.";
+    return "Could not see the Android EveryList sync service. Start Bluetooth sync on Android, wait until it says Ready, then try again.";
   }
   if (/bluetooth adapter|bluetooth is not available|turned off|unavailable/i.test(message)) {
     return "Bluetooth is turned off or unavailable on this PC.";
@@ -3849,7 +3855,7 @@ function saveSettings(event) {
 }
 
 function applySettings() {
-  document.title = "Listy";
+  document.title = "EveryList";
   document.body.classList.toggle("dark-mode", state.settings.theme === "dark");
   syncThemeButton();
   syncViewButtons();

@@ -46,7 +46,7 @@ if (-not $sdkList) {
 $buildDir = Join-Path $root "work\bluetooth-helper-build"
 New-Item -ItemType Directory -Force -Path $buildDir | Out-Null
 
-$project = Join-Path $buildDir "ListyBluetoothHelper.csproj"
+$project = Join-Path $buildDir "EveryListBluetoothHelper.csproj"
 $program = Join-Path $buildDir "Program.cs"
 
 Copy-Item -LiteralPath $source -Destination $program -Force
@@ -67,4 +67,4 @@ if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
-Copy-Item -LiteralPath (Join-Path $buildDir "ListyBluetoothHelper.exe") -Destination $output -Force
+Copy-Item -LiteralPath (Join-Path $buildDir "EveryListBluetoothHelper.exe") -Destination $output -Force

@@ -1,131 +1,56 @@
-# Listy
+# EveryList
 
-Listy is a local-first app for shopping, games, movies, shows, and locations. It supports universal profiles, status tabs, fuzzy tag filtering, duplicate detection, link scraping, manual editing, Bin restore, sync bundles, and Bluetooth sync between the Windows and Android apps.
+EveryList is a local-first app for keeping track of things you want, might buy, already bought, ordered, watched, played, or plan to visit. It started as a shopping list, then grew into one place for shopping, games, movies, shows, and locations.
 
-## What Is Safe To Upload
+The main idea is simple: each profile has its own lists, colours, tags, statuses, Bin, and item history, while the app itself stays private and useful offline.
 
-This repository is source only. It should not contain personal databases, logs, installers, APKs, build output, debug signing keys, or downloaded tool caches.
+## What It Does
 
-The app creates a fresh database for each user after install.
+EveryList can save items with a title, image, price or cost, link, description, notes, tags, priority, and status. Shopping items can also keep order details such as carrier, tracking link, estimated delivery, and order state.
 
-## Local Web App
+The app includes fuzzy search and tag filtering, so tags like `tech`, `Tech`, or close matches are easier to find. It also checks for likely duplicates before saving a new link.
 
-Requirements:
+Deleted items go to the Bin first, where they can be restored or cleaned later. This keeps accidental deletes recoverable without letting the database grow forever.
 
-- Node.js 24 or newer
+## Versions
 
-Run:
+There are three ways to use EveryList:
 
-```powershell
-npm install
-npm start
-```
+- **Windows app:** the full desktop app with local SQLite storage, release installer, and Bluetooth sync support.
+- **Android app:** a native offline phone app with its own local database, share-to-EveryList support, and sync tools.
+- **Hosted web app:** a GitHub Pages version that runs fully in the browser and starts clean for each visitor.
 
-Then open:
+The hosted web app does not include anyone's private database. Each browser keeps its own data locally.
 
-```text
-http://localhost:4173
-```
+## Data And Privacy
 
-Local web data is stored at:
+The Windows and Android apps store data on the device. The source repo does not include personal databases, logs, build folders, debug keys, old installers, or phone/PC data.
 
-```text
-data/shopping-list.sqlite
-```
-
-That folder is ignored by Git and should not be uploaded.
-
-## Windows App
-
-Requirements:
-
-- Windows
-- Node.js 24 or newer
-- Visual Studio Build Tools with `csc.exe`, or the .NET SDK
-
-Build:
-
-```powershell
-npm install
-npm run dist:win
-```
-
-The Windows installer is created in:
-
-```text
-dist/
-```
-
-The build script compiles `desktop/native-bluetooth-sync.cs` into the local helper binary needed by Bluetooth sync. The compiled `.exe` is ignored by Git.
-
-The installed Windows app stores data in the existing Windows app-data folder used by earlier Listy/TrackList builds, so old local PC data is preserved on your machine. That data is not bundled into new installers.
-
-## Android App
-
-Requirements:
-
-- Android Studio or Android command-line build tools
-- Android SDK 35
-- JDK 17 or newer
-
-Open the `android` folder in Android Studio and build a debug APK, or use Gradle if it is installed:
-
-```powershell
-cd android
-gradle assembleDebug
-```
-
-Android build output is ignored by Git. Do not commit APKs or debug keystores.
-
-## GitHub Pages Web Version
-
-The hosted web version is browser-only. It does not use the Node/SQLite server and it does not include your private data.
-
-Build the GitHub Pages files:
-
-```powershell
-npm run build:web
-```
-
-This writes the static site into:
-
-```text
-docs/
-```
-
-To host it on GitHub Pages:
-
-1. Push this repository to GitHub.
-2. Open the repository settings.
-3. Go to Pages.
-4. Choose "Deploy from a branch".
-5. Select the main branch and the `/docs` folder.
-
-Each visitor gets their own browser-local Listy data. Product scraping in the hosted version is limited because static pages cannot read many shop pages directly; users can still edit title, image, price, description, tags, and status manually.
-
-## Release Files
-
-Safe installer files can be kept locally in:
-
-```text
-release/
-```
-
-That folder is ignored by Git. Upload installers and APKs to GitHub Releases, not into the source repository.
-
-This clean copy currently includes local release files for:
-
-```text
-release/Listy Setup 1.6.9.exe
-release/Listy Android 1.6.9.apk
-```
+The hosted GitHub Pages version stores data in the visitor's browser. It does not have a server database and does not write back to GitHub.
 
 ## Sync
 
-Windows and Android keep independent local databases. Export/import sync bundles can merge changes between them, and Bluetooth sync can exchange those bundles directly when both devices are nearby.
+EveryList supports sync bundles for moving changes between devices. The Windows and Android apps also include Bluetooth sync support, which exchanges those bundles when both devices are nearby.
 
-The offline sync plan is tracked in:
+The sync model is local-first: each device can work independently, then merge changes later.
 
-```text
-docs/offline-sync-roadmap.md
-```
+## Web Version
+
+The GitHub Pages build lives in the `docs` folder. The repository also includes a root `index.html` fallback, so Pages can work whether GitHub is publishing from `/docs` or from the repository root.
+
+If GitHub Pages shows this README instead of the app, Pages is probably publishing the root before the root `index.html` change was pushed, or it is set to the wrong folder. The best setup is:
+
+- Branch: `main`
+- Folder: `/docs`
+
+Your Pages URL should then open the EveryList app directly.
+
+## Building From Source
+
+The local web app runs with Node.js 24 or newer. The Windows app uses Electron and builds an NSIS installer. The Android app can be opened and built from the `android` folder with Android Studio or compatible Android command-line tools.
+
+The Windows Bluetooth helper is source-controlled as `desktop/native-bluetooth-sync.cs`. The compiled helper is generated locally during packaging and is not committed.
+
+## Releases
+
+Installers and APKs belong in GitHub Releases, not in the source repo. The local `release` folder is ignored by Git so release files can sit beside the source without being committed by accident.

@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ListyAndroid"
+rootProject.name = "EveryListAndroid"
 include ":app"

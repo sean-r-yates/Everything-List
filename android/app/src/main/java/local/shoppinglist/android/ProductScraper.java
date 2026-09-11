@@ -18,7 +18,7 @@ final class ProductScraper {
         connection.setConnectTimeout(12000);
         connection.setReadTimeout(12000);
         connection.setInstanceFollowRedirects(true);
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 Listy Android");
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 EveryList Android");
         connection.setRequestProperty("Accept", "text/html,application/xhtml+xml");
 
         StringBuilder html = new StringBuilder();

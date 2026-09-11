@@ -85,7 +85,7 @@ internal sealed class NativeBluetoothSync
             throw new InvalidOperationException("No PC sync bundle was provided.");
         }
 
-        EmitStatus("Start Bluetooth sync on Android and wait for Ready. Scanning for Listy...");
+        EmitStatus("Start Bluetooth sync on Android and wait for Ready. Scanning for EveryList...");
         Exception gattError = null;
         try
         {
@@ -98,17 +98,17 @@ internal sealed class NativeBluetoothSync
             gattError = error;
         }
 
-        EmitStatus("BLE sync could not open the Listy service. Trying classic Bluetooth fallback...");
+        EmitStatus("BLE sync could not open the EveryList service. Trying classic Bluetooth fallback...");
         string fallbackBundle = await SyncWithRfcommAsync(pcBundle, gattError);
         EmitBundle(fallbackBundle);
     }
 
     private async Task<string> SyncWithGattAsync(string pcBundle)
     {
-        using (GattConnection connection = await OpenListyConnectionAsync())
+        using (GattConnection connection = await OpenEveryListConnectionAsync())
         {
             GattDeviceService service = connection.Service;
-            EmitStatus("Connected to " + SafeName(connection.DeviceName) + ". Opening Listy sync channels...");
+            EmitStatus("Connected to " + SafeName(connection.DeviceName) + ". Opening EveryList sync channels...");
             GattCharacteristic rx = await FindCharacteristicAsync(service, RxUuid, "send");
             GattCharacteristic tx = await FindCharacteristicAsync(service, TxUuid, "receive");
 
@@ -156,7 +156,7 @@ internal sealed class NativeBluetoothSync
         Exception rfcommError = null;
         try
         {
-            EmitStatus("Searching for classic Listy Bluetooth fallback...");
+            EmitStatus("Searching for classic EveryList Bluetooth fallback...");
             RfcommDeviceService service = await OpenRfcommServiceAsync();
             using (service)
             using (StreamSocket socket = new StreamSocket())
@@ -169,7 +169,7 @@ internal sealed class NativeBluetoothSync
                         SocketProtectionLevel.BluetoothEncryptionAllowNullAuthentication
                     )),
                     30000,
-                    "Windows found the classic Listy service, but could not connect."
+                    "Windows found the classic EveryList service, but could not connect."
                 );
 
                 DataReader reader = new DataReader(socket.InputStream);
@@ -203,13 +203,13 @@ internal sealed class NativeBluetoothSync
         }
 
         throw new InvalidOperationException(
-            "Bluetooth could not open Listy through BLE or classic Bluetooth. " +
+            "Bluetooth could not open EveryList through BLE or classic Bluetooth. " +
             "BLE path: " + gattError.Message + " Classic path: " +
             (rfcommError == null ? "unknown error." : rfcommError.Message)
         );
     }
 
-    private async Task<GattConnection> OpenListyConnectionAsync()
+    private async Task<GattConnection> OpenEveryListConnectionAsync()
     {
         Exception directError = null;
         try
@@ -219,7 +219,7 @@ internal sealed class NativeBluetoothSync
         catch (Exception error)
         {
             directError = error;
-            EmitStatus("Direct Listy service discovery did not finish. Trying Bluetooth address fallback...");
+            EmitStatus("Direct EveryList service discovery did not finish. Trying Bluetooth address fallback...");
         }
 
         try
@@ -228,7 +228,7 @@ internal sealed class NativeBluetoothSync
             BluetoothLEDevice device = await OpenDeviceAsync(address);
             try
             {
-                EmitStatus("Connected to " + SafeName(device.Name) + ". Finding Listy service...");
+                EmitStatus("Connected to " + SafeName(device.Name) + ". Finding EveryList service...");
                 return new GattConnection
                 {
                     Service = await FindServiceAsync(device),
@@ -245,7 +245,7 @@ internal sealed class NativeBluetoothSync
         catch (Exception addressError)
         {
             throw new InvalidOperationException(
-                "Bluetooth could not open the Listy service. " +
+                "Bluetooth could not open the EveryList service. " +
                 "Direct service path: " + directError.Message + " Address path: " + addressError.Message
             );
         }
@@ -255,7 +255,7 @@ internal sealed class NativeBluetoothSync
     {
         await EnsureBluetoothAvailableAsync();
 
-        EmitStatus("Searching for the Listy GATT service directly...");
+        EmitStatus("Searching for the EveryList GATT service directly...");
         DeviceInformation info = await FindGattServiceInfoAsync();
         Exception lastError = null;
 
@@ -263,22 +263,22 @@ internal sealed class NativeBluetoothSync
         {
             try
             {
-                EmitStatus("Opening Listy GATT service (" + attempt + "/3)...");
+                EmitStatus("Opening EveryList GATT service (" + attempt + "/3)...");
                 GattDeviceService service = await WithTimeout(
                     ToTask(GattDeviceService.FromIdAsync(info.Id, GattSharingMode.SharedReadAndWrite)),
                     12000,
-                    "Windows found the Listy service, but could not open it."
+                    "Windows found the EveryList service, but could not open it."
                 );
                 if (service == null)
                 {
-                    lastError = new InvalidOperationException("Windows opened the Listy service but returned no service object.");
+                    lastError = new InvalidOperationException("Windows opened the EveryList service but returned no service object.");
                 }
                 else
                 {
                     GattOpenStatus openStatus = await WithTimeout(
                         ToTask(service.OpenAsync(GattSharingMode.SharedReadAndWrite)),
                         10000,
-                        "Windows found the Listy service, but could not fully open it."
+                        "Windows found the EveryList service, but could not fully open it."
                     );
                     if (openStatus == GattOpenStatus.Success || openStatus == GattOpenStatus.AlreadyOpened)
                     {
@@ -288,7 +288,7 @@ internal sealed class NativeBluetoothSync
                             DeviceName = ServiceDeviceName(service, info)
                         };
                     }
-                    lastError = new InvalidOperationException("Opening the Listy service returned " + openStatus + ".");
+                    lastError = new InvalidOperationException("Opening the EveryList service returned " + openStatus + ".");
                     service.Dispose();
                 }
             }
@@ -299,13 +299,13 @@ internal sealed class NativeBluetoothSync
 
             if (attempt < 3)
             {
-                EmitStatus("Windows saw the Listy service, but did not open it. Retrying...");
+                EmitStatus("Windows saw the EveryList service, but did not open it. Retrying...");
                 await Task.Delay(1500 * attempt);
             }
         }
 
         throw new InvalidOperationException(
-            "Windows found the Listy service, but could not open it after 3 tries. " +
+            "Windows found the EveryList service, but could not open it after 3 tries. " +
             (lastError == null ? "" : lastError.Message)
         );
     }
@@ -338,7 +338,7 @@ internal sealed class NativeBluetoothSync
             return await WithTimeout(
                 found.Task,
                 18000,
-                "Could not see the Android Listy GATT service. Keep Android Bluetooth sync open until it says Ready."
+                "Could not see the Android EveryList GATT service. Keep Android Bluetooth sync open until it says Ready."
             );
         }
         finally
@@ -436,7 +436,7 @@ internal sealed class NativeBluetoothSync
             return await WithTimeout(
                 found.Task,
                 20000,
-                "Could not see the Android Listy sync service. Keep Android Bluetooth sync open until it says Ready."
+                "Could not see the Android EveryList sync service. Keep Android Bluetooth sync open until it says Ready."
             );
         }
         finally
@@ -458,7 +458,7 @@ internal sealed class NativeBluetoothSync
                 GattDeviceServicesResult services = await WithTimeout(
                     ToTask(device.GetGattServicesForUuidAsync(ServiceUuid, BluetoothCacheMode.Uncached)),
                     8000,
-                    "Windows took too long finding the Listy service."
+                    "Windows took too long finding the EveryList service."
                 );
                 if (services.Status == GattCommunicationStatus.Success && services.Services.Count > 0)
                 {
@@ -471,11 +471,11 @@ internal sealed class NativeBluetoothSync
                 lastError = error;
             }
 
-            EmitStatus("Waiting for Android to expose the Listy service...");
+            EmitStatus("Waiting for Android to expose the EveryList service...");
             await Task.Delay(1200);
         }
 
-        throw new InvalidOperationException("Bluetooth connected, but Windows could not find the Listy service. " + (lastError == null ? "" : lastError.Message));
+        throw new InvalidOperationException("Bluetooth connected, but Windows could not find the EveryList service. " + (lastError == null ? "" : lastError.Message));
     }
 
     private async Task<RfcommDeviceService> OpenRfcommServiceAsync()
@@ -490,7 +490,7 @@ internal sealed class NativeBluetoothSync
         catch (Exception error)
         {
             watcherError = error;
-            EmitStatus("Classic service watcher did not find Listy. Checking paired Bluetooth devices...");
+            EmitStatus("Classic service watcher did not find EveryList. Checking paired Bluetooth devices...");
         }
 
         try
@@ -534,16 +534,16 @@ internal sealed class NativeBluetoothSync
             DeviceInformation info = await WithTimeout(
                 found.Task,
                 60000,
-                "Classic Bluetooth fallback could not see the Listy service. Pair this phone with Windows or accept the Android visibility prompt, then try again."
+                "Classic Bluetooth fallback could not see the EveryList service. Pair this phone with Windows or accept the Android visibility prompt, then try again."
             );
             RfcommDeviceService service = await WithTimeout(
                 ToTask(RfcommDeviceService.FromIdAsync(info.Id)),
                 30000,
-                "Windows found the classic Listy service, but could not open it."
+                "Windows found the classic EveryList service, but could not open it."
             );
             if (service == null)
             {
-                throw new InvalidOperationException("Windows opened classic Bluetooth but returned no Listy service.");
+                throw new InvalidOperationException("Windows opened classic Bluetooth but returned no EveryList service.");
             }
             return service;
         }
@@ -597,18 +597,18 @@ internal sealed class NativeBluetoothSync
                 RfcommDeviceServicesResult result = await WithTimeout(
                     ToTask(device.GetRfcommServicesForIdAsync(serviceId, BluetoothCacheMode.Uncached)),
                     25000,
-                    "Windows took too long checking Listy classic service on " + SafeName(device.Name) + "."
+                    "Windows took too long checking EveryList classic service on " + SafeName(device.Name) + "."
                 );
                 if (result != null && result.Services.Count > 0)
                 {
-                    EmitStatus("Found classic Listy service on " + SafeName(device.Name) + ".");
+                    EmitStatus("Found classic EveryList service on " + SafeName(device.Name) + ".");
                     RfcommDeviceService service = result.Services[0];
                     device = null;
                     return service;
                 }
 
                 lastError = new InvalidOperationException(
-                    SafeName(device.Name) + " did not expose Listy classic service" +
+                    SafeName(device.Name) + " did not expose EveryList classic service" +
                     (result == null ? "." : " (" + result.Error + ").")
                 );
             }
@@ -636,7 +636,7 @@ internal sealed class NativeBluetoothSync
         }
 
         throw new InvalidOperationException(
-            "No paired Bluetooth device exposed the Listy classic service. " +
+            "No paired Bluetooth device exposed the EveryList classic service. " +
             "Open Android Bluetooth sync, accept the visibility prompt, and make sure the phone is paired in Windows Bluetooth settings. " +
             (lastError == null ? "" : "Last paired-device message: " + lastError.Message)
         );
